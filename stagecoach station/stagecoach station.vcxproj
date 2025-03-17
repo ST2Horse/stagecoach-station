@@ -130,6 +130,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bash.h" />
     <ClInclude Include="struct.h" />
     <ClInclude Include="标头.h" />
   </ItemGroup>
