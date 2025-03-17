@@ -18,6 +18,8 @@ Node<T>* createlinkedlist(T value)
     return new Node<T>(value);  //创建普遍T节点
 }
 
+
+
 /*添加节点到链表结尾*/
 template <typename T>
 void addNode(Node<T>*& head, T value)      //使用引用避免指针的复杂输入
@@ -35,6 +37,8 @@ void addNode(Node<T>*& head, T value)      //使用引用避免指针的复杂输入
     }
     temp->next = newNode;                 //尾部添加节点
 }
+
+
 
 /*删除节点*/
 template <typename T>
@@ -55,7 +59,6 @@ void delNode(Node<T>*& head, T value)  //使用引用避免指针的复杂输入
     {                                  //遍历至删除节点的前一个
         temp = temp->next;
     }
-
     if (temp->next != nullptr)         // 找到前一位，且目标节点且不为空
     {  
         Node<T>* deltemp = temp->next; //创建临时节点
