@@ -1,2 +1,4 @@
 #pragma once
-struct
+struct node {
+
+};
