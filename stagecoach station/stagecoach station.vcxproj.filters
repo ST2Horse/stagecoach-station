@@ -24,6 +24,9 @@
     <ClCompile Include="administrator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="user.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="struct.h">
