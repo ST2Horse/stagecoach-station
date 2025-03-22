@@ -2,7 +2,7 @@
 #include"gui_simple.h"
 #include"struct.h"
 #include<time.h>
-#include<vector>
+#include"bash.h"
 char username[32] = { 0 };//µç»°ºÅÂë
 char password[32] = { 0 };//ÃÜÂë
 char repassword[32] = { 0 };//ÃÜÂë
@@ -22,7 +22,9 @@ enum Page
 	page_register_repeatedname,
 	page_register_notsamepassword,
 	page_employee_register_wrongcontrolcode,
-	page_admin_home
+	page_admin_home,
+	page_employee_home,
+	page_user_home,
 };
 Page currentPage = page_firstpage;
 
@@ -42,7 +44,7 @@ void user_load(const char* file)
 	{
 		regUser* reguser = (regUser*)calloc(1, sizeof(regUser));
 		fscanf(fp, "%d\t%s\n", &reguser->telnum, reguser->password);
-		regusers.push_back(reguser);
+		
 	}
 
 	fclose(fp);
