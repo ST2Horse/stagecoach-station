@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include"gui_simple.h"
-
+#include"struct.h"
+#include<time.h>
+#include<vector>
 char username[32] = { 0 };//电话号码
 char password[32] = { 0 };//密码
 char repassword[32] = { 0 };//密码
@@ -24,6 +26,27 @@ enum Page
 };
 Page currentPage = page_firstpage;
 
+void user_load(const char* file)
+{
+	FILE* fp = fopen(file, "r");//打开文件(只读)
+	if (!fp)//文件不存在
+	{
+		perror("user.txt not found");//输出错误信息
+		return;
+	}
+	char buf[BUFSIZ];//缓冲区
+	//读取表头
+	fgets(buf, BUFSIZ, fp);
+	//读取数据
+	while (!feof(fp))
+	{
+		regUser* reguser = (regUser*)calloc(1, sizeof(regUser));
+		fscanf(fp, "%d\t%s\n", &reguser->telnum, reguser->password);
+		regusers.push_back(reguser);
+	}
+
+	fclose(fp);
+}
 
 void setPage(Page page)
 {
@@ -37,6 +60,7 @@ void setPage(Page page)
 void init(void* arg)//背景图片
 {
 	loadimage(&img_user_login, "res/pic/img.jpg",getwidth(),getheight());
+	user_load("res/txt/user.txt");
 }
 void render(void* arg)//渲染
 {

@@ -8,11 +8,6 @@ struct user//用户链表
 	struct package* pPack;//自己的包裹链表
 	struct user* next;
 };
-struct package//自己的包裹链表
-{
-	struct packageProp eProp;//包裹信息
-	struct package* next;
-};
 struct packageProp//包裹信息
 {
 	int prop;//属性（0表示普通，1表示小袋装，2表示中袋装，3表示大袋装，4表示冷藏，5表示异常）
@@ -25,6 +20,12 @@ struct packageProp//包裹信息
 	int width;//最短边 
 	/*这三项在入库时填写后需要动态调整一次避免乱填 单位cm，若prop=1~3则都赋值为固定数值*/
 };
+struct package//自己的包裹链表
+{
+	struct packageProp eProp;//包裹信息
+	struct package* next;
+};
+
 struct regUser//已注册用户链表
 {
 	int telnum;//电话号码
