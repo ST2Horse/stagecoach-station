@@ -14,6 +14,7 @@ struct user//用户链表
 struct package//自己的包裹链表
 {
 	struct packageProp eProp;//包裹信息
+	int telephone;
 	struct package* next;
 };
 struct packageProp//包裹信息
@@ -28,10 +29,11 @@ struct packageProp//包裹信息
 	int width;//最短边 
 	/*这三项在入库时填写后需要动态调整一次避免乱填 单位cm，若prop=1~3则都赋值为固定数值*/
 };
-struct admin//管理员和员工链表
+struct employee//员工链表
 {
 	char adminCode[20];//管理码
 	char password[20];//密码
+	int telephone;
 	struct admin* next;
 };
 struct shelf//货架
