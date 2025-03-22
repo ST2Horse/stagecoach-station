@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="employee.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -27,15 +24,33 @@
     <ClCompile Include="user.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="源.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui_simple.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="package.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="struct.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="标头.h">
+    <ClInclude Include="bash.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="bash.h">
+    <ClInclude Include="gui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui_simple.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
