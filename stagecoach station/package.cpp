@@ -3,7 +3,7 @@
 #include <string.h>
 #include "struct.h"
 
-struct package* creatpack(void)//创建包裹链表哨兵
+struct package* creatPack(void)//创建包裹链表哨兵
 {
 	struct package* head = (struct package*)malloc(sizeof(struct package));
 	head->next = NULL;
@@ -19,24 +19,26 @@ void chainPack(struct package* head, struct packageProp eProp)//包裹入链
 	p->next = q;
 };
 
-struct user* creatuser(void)//创建用户链表哨兵(系统初始化时调用)
+struct user* creatUser(void)//创建用户链表哨兵(系统初始化时调用)
 {
 	struct user* head = (struct user*)malloc(sizeof(struct user));
 	head->next = NULL;
 	return head;
 };
 
-void adduser(struct user* head, int telnum, char* name)//用户入链
+void addUser(struct user* head, int telnum, char* name)//用户入链
 {
 	struct user* p = head;
 	struct user* q = (struct user*)malloc(sizeof(struct user));
 	q->telnum = telnum;
 	strcpy(q->name, name);
+	q->password[0] = NULL;
 	q->credit = 100;
+	q->level = 0;
 	q->optUser[0] = NULL;
 	q->optUser[1] = NULL;
 	q->optUser[2] = NULL;
-	q->pPack = creatpack();
+	q->pPack = creatPack();
 	q->next = p->next;
 	p->next = q;
 };
@@ -53,7 +55,42 @@ struct user* findUser(struct user* head, int telnum)//查找用户
 	return NULL;
 };
 
-void orgnizePack(struct packageProp &eProp)//整理包裹信息
+struct shelf* creatShelf(void)//创建货架链表系统初始化时调用)
+{
+	struct shelf* head = (struct shelf*)malloc(sizeof(struct shelf));
+	head->next = NULL;
+	for (int i = 0; i < 125;i++)
+	{
+		struct shelf* p = (struct shelf*)malloc(sizeof(struct shelf));
+		p->space = 0;
+		p->level = i+1;
+		p->next = head->next;
+		head->next = p;
+	}
+	return head;
+};
+
+void arrShelf(struct shelf* head)
+{
+	struct shelf* p = head->next, * p0 = head, * q = p;
+	while (q->next!=nullptr&&p->space < q->next->space)
+	{
+		q = q->next;
+	}
+	p0->next = p->next;
+	p->next = q->next;
+	q->next = p;
+}
+void allocate(struct packageProp& eProp,struct shelf* head)//分配货架
+{
+	
+	if(eProp.length>40||eProp.length>h)
+	
+	
+	arrShelf(head);
+};
+
+void orgnizePack(struct packageProp& eProp)//整理包裹信息
 {
 	if (eProp.prop == 1)
 	{
@@ -75,7 +112,26 @@ void orgnizePack(struct packageProp &eProp)//整理包裹信息
 	}
 	else
 	{
-		
+		int temp;
+		if (eProp.length < eProp.width)
+		{
+			temp = eProp.length;
+			eProp.length = eProp.width;
+			eProp.width = temp;
+		}
+		if (eProp.length < eProp.height)
+		{
+			temp = eProp.length;
+			eProp.length = eProp.height;
+			eProp.height = temp;
+		}
+		if (eProp.width < eProp.height)
+		{
+			temp = eProp.width;
+			eProp.width = eProp.height;
+			eProp.height = temp;
+		}
+		allocate(eProp);
 	}
 };
 
@@ -84,7 +140,7 @@ void addPack(struct user* head, struct packageProp eProp, int telnum, char* name
 	struct user* p = findUser(head, telnum);
 	if (!p)
 	{
-		adduser(head, telnum, name);
+		addUser(head, telnum, name);
 		p = head->next;
 	}
 	struct package* q = p->pPack;
