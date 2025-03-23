@@ -59,11 +59,11 @@ struct shelf* creatShelf(void)//创建货架链表系统初始化时调用)
 {
 	struct shelf* head = (struct shelf*)malloc(sizeof(struct shelf));
 	head->next = NULL;
-	for (int i = 0; i < 125;i++)
+	for (int i = 1; i <= 125;i++)
 	{
 		struct shelf* p = (struct shelf*)malloc(sizeof(struct shelf));
 		p->space = 0;
-		p->level = i+1;
+		p->level5 = i;
 		p->next = head->next;
 		head->next = p;
 	}
@@ -83,10 +83,14 @@ void arrShelf(struct shelf* head)
 }
 void allocate(struct packageProp& eProp,struct shelf* head)//分配货架
 {
-	
-	if(eProp.length>40||eProp.length>h)
-	
-	
+	struct shelf* p = head->next;
+	if(eProp.length>40||eProp.length>p->space)
+	{
+		eProp.level10 = 0；
+		return;
+	}
+	int a=p->level5
+	eProp->level10=p->
 	arrShelf(head);
 };
 
