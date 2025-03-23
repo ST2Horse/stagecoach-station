@@ -3,6 +3,7 @@
 #include"struct.h"
 #include<time.h>
 #include"bash.h"
+#include"package.cpp"
 char username[32] = { 0 };//µç»°ºÅÂë
 char password[32] = { 0 };//ÃÜÂë
 char repassword[32] = { 0 };//ÃÜÂë
@@ -50,6 +51,7 @@ void user_load(const char* file)
 	fclose(fp);
 }
 
+
 void setPage(Page page)
 {
 	currentPage = page;
@@ -62,7 +64,7 @@ void setPage(Page page)
 void init(void* arg)//±³¾°Í¼Æ¬
 {
 	loadimage(&img_user_login, "res/pic/img.jpg",getwidth(),getheight());
-	user_load("res/txt/user.txt");
+	//user_load("res/txt/user.txt");
 }
 void render(void* arg)//äÖÈ¾
 {

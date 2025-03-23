@@ -1,7 +1,15 @@
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "struct.h"
+
+struct user* creatUser(void);//创建用户链表哨兵(系统初始化时调用)
+void addUser(struct user* head, char* telnum, char* name);//用户入链
+struct user* findUser(struct user* head, char* telnum);//查找用户
+struct shelf* creatShelf(void);//创建货架链表(系统初始化时调用)
+void addPack(struct user* head, struct shelf* shelf, struct packageProp eProp, char* telnum, char* name);//包裹入库
 
 struct package* creatPack(void)//创建包裹链表哨兵
 {
@@ -10,13 +18,15 @@ struct package* creatPack(void)//创建包裹链表哨兵
 	return head;
 };
 
-void chainPack(struct package* head, struct packageProp eProp)//包裹入链
+void chainPack(struct package* head, struct packageProp eProp,char* telnum)//包裹入链
 {
 	struct package* p = head;
 	struct package* q = (struct package*)malloc(sizeof(struct package));
 	q->eProp = eProp;
+	strcpy(q->telephone,telnum);
 	q->next = p->next;
 	p->next = q;
+	return;
 };
 
 struct user* creatUser(void)//创建用户链表哨兵(系统初始化时调用)
@@ -26,36 +36,37 @@ struct user* creatUser(void)//创建用户链表哨兵(系统初始化时调用)
 	return head;
 };
 
-void addUser(struct user* head, int telnum, char* name)//用户入链
+void addUser(struct user* head, char* telnum, char* name)//用户入链
 {
 	struct user* p = head;
 	struct user* q = (struct user*)malloc(sizeof(struct user));
-	q->telnum = telnum;
+	strcpy(q->telnum, telnum);
 	strcpy(q->name, name);
-	q->password[0] = NULL;
+	q->password[0] = '\0';
 	q->credit = 100;
 	q->level = 0;
-	q->optUser[0] = NULL;
-	q->optUser[1] = NULL;
-	q->optUser[2] = NULL;
+	q->optUser[0] = nullptr;
+	q->optUser[1] = nullptr;
+	q->optUser[2] = nullptr;
 	q->pPack = creatPack();
 	q->next = p->next;
 	p->next = q;
+	return;
 };
 
-struct user* findUser(struct user* head, int telnum)//查找用户
+struct user* findUser(struct user* head, char* telnum)//查找用户
 {
 	struct user* p = head->next;
 	while (p)
 	{
-		if (p->telnum == telnum)
+		if (strcmp(p->telnum,telnum))
 			return p;
 		p = p->next;
 	}
 	return NULL;
 };
 
-struct shelf* creatShelf(void)//创建货架链表系统初始化时调用)
+struct shelf* creatShelf(void)//创建货架链表系统初始化时调用
 {
 	struct shelf* head = (struct shelf*)malloc(sizeof(struct shelf));
 	head->next = NULL;
@@ -80,21 +91,59 @@ void arrShelf(struct shelf* head)
 	p0->next = p->next;
 	p->next = q->next;
 	q->next = p;
+	return;
 }
+
 void allocate(struct packageProp& eProp,struct shelf* head)//分配货架
 {
-	struct shelf* p = head->next;
-	if(eProp.length>40||eProp.length>p->space)
+	struct shelf* p = head->next;int i;
+	if(eProp.length>40||eProp.length>150-p->space)
 	{
-		eProp.level10 = 0；
+		eProp.level10 = 0;
+		for (i = 0;head->pack[i];i++);
+		head->pack[i] = 1;
+		eProp.code = i;
 		return;
 	}
-	int a=p->level5
-	eProp->level10=p->
+	int a = p->level5/25+1,b=p->level5/5+1,c=p->level5%5+1;
+	eProp.level10 = a*100+b*10+c;
+	p->space += eProp.width;
+	for (i = 0;p->pack[i];i++);
+	p->pack[i] = 1;
+	eProp.code = i;
 	arrShelf(head);
+	return;
 };
 
-void orgnizePack(struct packageProp& eProp)//整理包裹信息
+void sumTime(struct packageProp& eProp)// 生成时间
+{
+	std::time_t now = std::time(nullptr);
+	std::tm local_time;  // 创建 tm 结构体存储时间
+	// 使用 localtime_s 替代 localtime（参数顺序：先时间戳指针，再 tm 结构体指针）
+	int ca[6];
+	if (localtime_s(&local_time, &now) == 0) { // 检查是否成功
+		ca[0] = (local_time.tm_year + 1900) % 100;// 年
+		ca[1] = local_time.tm_mon + 1;// 月
+		ca[2] = local_time.tm_mday;// 日
+		ca[3] = local_time.tm_hour;// 时
+		ca[4] = local_time.tm_min;// 分
+		ca[5] = local_time.tm_sec;// 秒
+	}
+	else {
+		printf("failed to load time");
+		return;
+	}
+	char* t = eProp.time;
+	for (int i = 0;i < 12;i += 2)
+	{
+		t[i] = ca[i / 2] / 10;
+		t[i + 1] = ca[i / 2] % 10;
+	}
+	t[12] = '\0';
+	return;
+}
+
+void orgnizePack(struct packageProp& eProp,struct shelf* head)//整理包裹信息
 {
 	if (eProp.prop == 1)
 	{
@@ -135,11 +184,13 @@ void orgnizePack(struct packageProp& eProp)//整理包裹信息
 			eProp.width = eProp.height;
 			eProp.height = temp;
 		}
-		allocate(eProp);
+		allocate(eProp, head);
+		sumTime(eProp);
 	}
-};
+	return;
+}
 
-void addPack(struct user* head, struct packageProp eProp, int telnum, char* name)//包裹入库
+void addPack(struct user* head,struct shelf* shelf, struct packageProp eProp, char* telnum, char* name)//包裹入库
 {
 	struct user* p = findUser(head, telnum);
 	if (!p)
@@ -147,6 +198,8 @@ void addPack(struct user* head, struct packageProp eProp, int telnum, char* name
 		addUser(head, telnum, name);
 		p = head->next;
 	}
+	orgnizePack(eProp, shelf);
 	struct package* q = p->pPack;
-	chainPack(q, eProp);
-};
+	chainPack(q, eProp,telnum);
+	return;
+}
