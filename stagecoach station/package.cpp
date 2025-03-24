@@ -5,16 +5,10 @@
 #include <time.h>
 #include "struct.h"
 
-struct user* creatUser(void);//¥¥Ω®”√ªß¡¥±Ì…⁄±¯(œµÕ≥≥ı ºªØ ±µ˜”√)
-void addUser(struct user* head, char* telnum, char* name);//”√ªß»Î¡¥
-struct user* findUser(struct user* head, char* telnum);//≤È’“”√ªß
-struct shelf* creatShelf(void);//¥¥Ω®ªıº‹¡¥±Ì(œµÕ≥≥ı ºªØ ±µ˜”√)
-void addPack(struct user* head, struct shelf* shelf, struct packageProp eProp, char* telnum, char* name);//∞¸π¸»Îø‚
-
 struct package* creatPack(void)//¥¥Ω®∞¸π¸¡¥±Ì…⁄±¯
 {
 	struct package* head = (struct package*)malloc(sizeof(struct package));
-	head->next = NULL;
+	head->next = nullptr;
 	return head;
 };
 
@@ -32,7 +26,7 @@ void chainPack(struct package* head, struct packageProp eProp,char* telnum)//∞¸π
 struct user* creatUser(void)//¥¥Ω®”√ªß¡¥±Ì…⁄±¯(œµÕ≥≥ı ºªØ ±µ˜”√)
 {
 	struct user* head = (struct user*)malloc(sizeof(struct user));
-	head->next = NULL;
+	head->next = nullptr;
 	return head;
 };
 
@@ -63,13 +57,28 @@ struct user* findUser(struct user* head, char* telnum)//≤È’“”√ªß
 			return p;
 		p = p->next;
 	}
-	return NULL;
+	return nullptr;
 };
+
+void delUser(struct user* head, char* telnum) // …æ≥˝”√ªß
+{
+	struct user* p = head->next;
+	while (p->next)
+	{
+		if (strcmp(p->next->telnum, telnum))
+		{
+			struct user* q = p->next;
+			p->next = q->next;
+			free(q);
+		}
+		p = p->next;
+	}
+}
 
 struct shelf* creatShelf(void)//¥¥Ω®ªıº‹¡¥±ÌœµÕ≥≥ı ºªØ ±µ˜”√
 {
 	struct shelf* head = (struct shelf*)malloc(sizeof(struct shelf));
-	head->next = NULL;
+	head->next = nullptr;
 	for (int i = 1; i <= 125;i++)
 	{
 		struct shelf* p = (struct shelf*)malloc(sizeof(struct shelf));
@@ -105,45 +114,53 @@ void allocate(struct packageProp& eProp,struct shelf* head)//∑÷≈‰ªıº‹
 		eProp.code = i;
 		return;
 	}
-	int a = p->level5/25+1,b=p->level5/5+1,c=p->level5%5+1;
+	int a = p->level5/25+1,b=(p->level5/5)%5+1,c=p->level5%5+1;
 	eProp.level10 = a*100+b*10+c;
+	eProp.Code[0] = 'A'+a-1;
+	eProp.Code[1] = '0' + b;
+	eProp.Code[2] = '0' + c;
+	eProp.Code[3] = '-';
 	p->space += eProp.width;
 	for (i = 0;p->pack[i];i++);
 	p->pack[i] = 1;
 	eProp.code = i;
+	eProp.Code[4] = i / 100;
+	eProp.Code[5] = (i / 10)%10;
+	eProp.Code[6] = i % 10;
+	eProp.Code[7] = '\0';
 	arrShelf(head);
 	return;
 };
 
-void sumTime(struct packageProp& eProp)// …˙≥… ±º‰
+int sumTime(char* t,struct report* rep)// …˙≥… ±º‰
 {
 	std::time_t now = std::time(nullptr);
 	std::tm local_time;  // ¥¥Ω® tm Ω·ππÃÂ¥Ê¥¢ ±º‰
-	//  π”√ localtime_s ÃÊ¥˙ localtime£®≤Œ ˝À≥–Ú£∫œ» ±º‰¥¡÷∏’Î£¨‘Ÿ tm Ω·ππÃÂ÷∏’Î£©
+	// ≤Œ ˝À≥–Ú£∫œ» ±º‰¥¡÷∏’Î£¨‘Ÿ tm Ω·ππÃÂ÷∏’Î
 	int ca[6];
 	if (localtime_s(&local_time, &now) == 0) { // ºÏ≤È «∑Ò≥…π¶
 		ca[0] = (local_time.tm_year + 1900) % 100;// ƒÍ
 		ca[1] = local_time.tm_mon + 1;// ‘¬
-		ca[2] = local_time.tm_mday;// »’
+		ca[2] = local_time.tm_mday+rep->next->day;// »’
 		ca[3] = local_time.tm_hour;//  ±
 		ca[4] = local_time.tm_min;// ∑÷
 		ca[5] = local_time.tm_sec;// √Î
 	}
 	else {
 		printf("failed to load time");
-		return;
+		return 0;
 	}
-	char* t = eProp.time;
-	for (int i = 0;i < 12;i += 2)
+	t[2] = '-';t[5] = '-';t[8] = ' ';t[11] = ':';t[14] = ':';
+	for (int i = 0;i < 17;i += 3)
 	{
-		t[i] = ca[i / 2] / 10;
-		t[i + 1] = ca[i / 2] % 10;
+		t[i] = '0'+ca[i / 3] / 10;
+		t[i + 1] = '0'+ca[i / 3] % 10;
 	}
-	t[12] = '\0';
-	return;
+	t[17] = '\0';
+	return now+rep->day*86400;
 }
 
-void orgnizePack(struct packageProp& eProp,struct shelf* head)//’˚¿Ì∞¸π¸–≈œ¢
+void orgnizePack(struct packageProp& eProp,struct shelf* head,struct report* rep)//’˚¿Ì∞¸π¸–≈œ¢
 {
 	if (eProp.prop == 1)
 	{
@@ -184,13 +201,13 @@ void orgnizePack(struct packageProp& eProp,struct shelf* head)//’˚¿Ì∞¸π¸–≈œ¢
 			eProp.width = eProp.height;
 			eProp.height = temp;
 		}
-		allocate(eProp, head);
-		sumTime(eProp);
 	}
+	allocate(eProp, head);
+	eProp.sec=sumTime(eProp.time,rep);
 	return;
 }
 
-void addPack(struct user* head,struct shelf* shelf, struct packageProp eProp, char* telnum, char* name)//∞¸π¸»Îø‚
+char* addPack(struct user* head,struct shelf* shelf, struct report* rep , struct packageProp eProp, char* telnum, char* name)//∞¸π¸»Îø‚
 {
 	struct user* p = findUser(head, telnum);
 	if (!p)
@@ -198,8 +215,96 @@ void addPack(struct user* head,struct shelf* shelf, struct packageProp eProp, ch
 		addUser(head, telnum, name);
 		p = head->next;
 	}
-	orgnizePack(eProp, shelf);
+	orgnizePack(eProp, shelf,rep);
 	struct package* q = p->pPack;
 	chainPack(q, eProp,telnum);
+	rep->pop++;
+	return eProp.Code;
+}
+
+struct package* findPack(struct user* head, char* Code) // Õ®π˝±‡¬Î’“∞¸π¸«∞«˝
+{
+	struct user* p = head->next;
+	if (!p) return nullptr;
+	struct package* q = p->pPack;
+	while (p)
+	{
+		while (q->next)
+		{
+			if (strcmp(Code, q->next->eProp.Code)) return q;
+			q = q->next;
+		}
+	}
+	return nullptr;
+}
+
+void delPack(struct user* head,char* Code)
+{
+	struct package* p = findPack(head, Code);
+	if (!p)
+	{
+		return;
+	}
+	struct package* q = p->next;
+	p->next = q->next;
+	free(q);
 	return;
 }
+
+char* popPack(struct user* head,struct report* rep, char* Code, char* telnum)
+{
+	char ptime[13];
+	int nptime=sumTime(ptime,rep);
+	struct package* p = findPack(head, Code);
+	if (!p)
+	{
+		printf("∞¸π¸≤ª¥Ê‘⁄");
+		return ptime;
+	}
+	if (p->next->eProp.prop == 4)
+	{
+		printf("∞¸π¸±ªŒÛ¡Ï");
+		return ptime;
+	}
+	if (strcmp(telnum, p->next->telephone))
+	{
+		struct package* q = p->next;
+		struct packageProp prop = q->eProp;
+		struct user* u = findUser(head, telnum);
+		if (nptime - prop.sec < 86400) u->credit += 5;
+		if (nptime - prop.sec > 86400 * 5) u->credit -= 50;
+		p->next = q->next;
+		free(q);
+		rep->next->pop++;
+		return ptime;
+	}
+	else
+	{
+		p->next->eProp.prop = 4;
+		rep->next->problem++;
+		return ptime;
+	}
+}
+
+struct report* creatReport(void) // œµÕ≥≥ı ºªØ ± π”√
+{
+	struct report* head = (struct report*)malloc(sizeof(struct report));
+	head->next = nullptr;
+	head->day = -1;
+	return head;
+}
+
+void dayPlus(struct report* head) // ÃÏ ˝º”“ª
+{
+	struct report* p = head;
+	struct report* q = (struct report*)malloc(sizeof(struct report));
+	q->pop = 0;
+	q->push = 0;
+	q->problem = 0;
+	q->day = ++p->day;
+
+	q->next = p->next;
+	p->next = q;
+	return;
+}
+

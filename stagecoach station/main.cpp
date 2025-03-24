@@ -1,9 +1,9 @@
 #include<stdio.h>
 #include"gui_simple.h"
 #include"struct.h"
+#include"function.h"
 #include<time.h>
 #include"bash.h"
-#include"package.cpp"
 char username[32] = { 0 };//电话号码
 char password[32] = { 0 };//密码
 char repassword[32] = { 0 };//密码
@@ -29,27 +29,7 @@ enum Page
 };
 Page currentPage = page_firstpage;
 
-void user_load(const char* file)
-{
-	FILE* fp = fopen(file, "r");//打开文件(只读)
-	if (!fp)//文件不存在
-	{
-		perror("user.txt not found");//输出错误信息
-		return;
-	}
-	char buf[BUFSIZ];//缓冲区
-	//读取表头
-	fgets(buf, BUFSIZ, fp);
-	//读取数据
-	while (!feof(fp))
-	{
-		regUser* reguser = (regUser*)calloc(1, sizeof(regUser));
-		fscanf(fp, "%d\t%s\n", &reguser->telnum, reguser->password);
-		
-	}
 
-	fclose(fp);
-}
 
 
 void setPage(Page page)
@@ -368,6 +348,7 @@ int main()
 
 	setOnRender(render);//设置渲染回调函数
 
-	messageLoop();//消息循环	
+	messageLoop();//消息循环
+
 	return 0;
 }

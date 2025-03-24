@@ -1,5 +1,4 @@
 #pragma once
-#include <time.h>
 struct user // 用户链表
 {
     char telnum[12]; // 电话号码
@@ -16,11 +15,13 @@ struct user // 用户链表
 struct packageProp // 包裹信息
 {
     int prop; // 属性（0表示普通，1表示小袋装，2表示中袋装，3表示大袋装，4表示异常）
-    char time[13];// 入库时间
+    int sec; // 时间戳
+    char time[18];// 入库时间
     int level10; /* 货架编号及层数(三个数字，第一个数字1~5表示货架区域A B C D E (值为0表示X，是放外面），
                     第二个数字1~5表示货架编号，第三个数字表示层数（共五层，一层40cm） */
     int code; // 包裹三位编号（顺序生成的在不同层不重复编号）
     /* 两个属性最后合成包裹编码（如A1-4000） */
+    char Code[8];
     int length; // 最长边
     int height; // 高
     int width; // 最短边 
@@ -48,4 +49,13 @@ struct shelf // 货架链表
     int level5; // 货架编号及层数(1~125)
     int pack[1000] = { 0 };
     struct shelf* next;
+};
+
+struct report // 日报链表
+{
+    int day;
+    int push;
+    int pop;
+    int problem;
+    struct report* next;
 };
